@@ -38,12 +38,12 @@
 
     <style>
 
-        /*button.output {*/
-            /*position: absolute;*/
-            /*left: 100vh;*/
-            /*top: 5vh;*/
+        button.output {
+            position: absolute;
 
-        /*}*/
+            top: -10vh;
+
+        }
 
         .unclicked {
             color: black;
@@ -214,6 +214,7 @@
 
             <div id="app">
                 <button class="output" v-on:click="returnData">Вивантажити дані</button>
+
                 <div class="unclicked" v-on:click="focus" v-for="number in numbers">
                     <div class="street">
                         <p>{{ "Адреса: " + number.street_name_geocode + " Ідентифікатор: " + number.id }}</p>
