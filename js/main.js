@@ -76,7 +76,7 @@ d3.csv('data/dataset.csv')
         function onMapClick(e) {
             popup
                 .setLatLng(e.latlng)
-                .setContent("Координати:  " + e.latlng.toString())
+                .setContent("Координати:  " + "(" + e.latlng.lat.toString() + ", " + e.latlng.lng.toString() + ")")
                 .openOn(map);
         }
         
