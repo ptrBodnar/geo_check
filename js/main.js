@@ -92,6 +92,17 @@ d3.csv('data/dataset.csv')
             })
             .addTo(map);
 
+        var marker = L.circleMarker([0, 0], {
+            color: 'red',
+            fill: 'green',
+            fillOpacity: 1,
+            fillColor: 'red',
+            radius: 20
+        })
+            .addTo(map);
+        
+        window.marker = marker;
+
         //nested data to build bars
         prepareData(markers, innitialData);
 

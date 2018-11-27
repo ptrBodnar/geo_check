@@ -1,74 +1,93 @@
-/**
- * Created by ptrbdr on 27.11.18.
- */
+
+new Vue({
+    el: '#app',
+    data: { numbers: [] },
+
+    mounted() {
+        // this.randomize()
+        // setInterval(this.randomize, 1000)
+        // console.log(this.numbers);
+
+        const vue = this;
+
+        d3.csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vQPsu0TBxNPtFHoXrTrPUBX05JeBWOnu_DQ6eOpSOdBc41oYwAbDSLW8dRk1vuvEtNstlNgG-J9CECL/pub?gid=0&single=true&output=csv')
+            .then(function (data, error) {
+                vue.numbers = data;
+            });
+
+    },
 
 
-d3.csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vQPsu0TBxNPtFHoXrTrPUBX05JeBWOnu_DQ6eOpSOdBc41oYwAbDSLW8dRk1vuvEtNstlNgG-J9CECL/pub?gid=0&single=true&output=csv')
-    .then(function (data, error) {
+    methods: {
+        focus(d) {
+            var coords = [+d.target.parentElement.nextElementSibling.value, +d.target.parentElement.nextElementSibling.nextElementSibling.value];
+            map.setView(coords, 18);
+            marker.setLatLng(coords);
 
-        data.sort((a, b) => parseFloat(a.id) - parseFloat(b.id));
+            d3.select(d.target).attr('class', 'clicked');
 
+            console.log(Vue.plain((this.numbers)));
 
-        var marker = L.circleMarker([0, 0], {
-            color: 'red',
-            fill: 'green',
-            fillOpacity: 1,
-            fillColor: 'red',
-            radius: 20
-        })
-            .addTo(map);
-
-        var table = d3.select('div#table').append('table');
-        var thead = table.append('thead');
-        var	tbody = table.append('tbody');
+        },
+        returnData(){
+            downloadCSV(Vue.plain(this.numbers));
+        }
+    }
+});
 
 
-    function tabulate(data, columns) {
 
-        // append the header row
-        thead.append('tr')
-            .selectAll('th')
-            .data(columns).enter()
-            .append('th')
-            .text(function (column) { return column; });
+function convertArrayOfObjectsToCSV(args) {
+    var result, ctr, keys, columnDelimiter, lineDelimiter, data;
 
-        // create a row for each object in the data
-        var rows = tbody.selectAll('tr')
-            .data(data)
-            .enter()
-            .append('tr')
-            .attr('class', 'unclicked');
-
-        // create a cell in each row for each column
-        var cells = rows.selectAll('td')
-            .data(function (row) {
-                return columns.map(function (column) {
-                    return {column: column, value: row[column]};
-                });
-            })
-            .enter()
-            .append('td')
-            .text(function (d) { return d.value.replace('Україна, Тернопіль, вулиця', '') });
-
-        return table;
+    data = args.data || null;
+    if (data == null || !data.length) {
+        return null;
     }
 
-    // render the table(s)
-    tabulate(data, ['street_name_geocode', 'id']); // 2 column table
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
 
-        d3.selectAll('tr').on('click', function (d) {
+    keys = Object.keys(data[0]);
 
-            // map.setZoom(16);
+    result = '';
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
 
-            map.setView([d.Latitude, d.Longitude], 18);
+    data.forEach(function(item) {
+        ctr = 0;
+        keys.forEach(function(key) {
+            if (ctr > 0) result += columnDelimiter;
 
-            // map.panTo([d.Latitude, d.Longitude]);
-            marker.setLatLng([d.Latitude, d.Longitude]);
+            result += item[key];
+            ctr++;
+        });
+        result += lineDelimiter;
+    });
 
-            d3.select(this).attr('class', 'clicked');
+    return result;
+}
 
+function downloadCSV(args) {
+    var data, filename, link;
+    var csv = convertArrayOfObjectsToCSV({
+        data: args
+    });
+    if (csv == null) return;
 
-        })
+    filename =  'export.csv';
 
+    if (!csv.match(/^data:text\/csv/i)) {
+        csv = 'data:text/csv;charset=utf-8,' + csv;
+    }
+    data = encodeURI(csv);
 
-});
+    link = document.createElement('a');
+    link.setAttribute('href', data);
+    link.setAttribute('download', filename);
+    link.innerHTML= "Click Here to download";
+    document.body.appendChild(link); // Required for FF
+    link.style.visibility = 'hidden';
+    link.click();
+    console.log('fffff')
+}
