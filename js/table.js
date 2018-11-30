@@ -20,11 +20,13 @@ new Vue({
 
     methods: {
         focus(d) {
+            d3.selectAll('.mapSelected').attr('class', 'clicked');
+
             var coords = [+d.target.parentElement.nextElementSibling.value, +d.target.parentElement.nextElementSibling.nextElementSibling.value];
             map.setView(coords, 18);
             marker.setLatLng(coords);
 
-            d3.select(d.target).attr('class', 'clicked');
+            d3.select(d.target.parentElement.parentElement).attr('class', 'mapSelected');
 
             console.log(Vue.plain((this.numbers)));
 

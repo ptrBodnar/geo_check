@@ -38,6 +38,16 @@
 
     <style>
 
+        .mapSelected {
+            border: solid red;
+            /*text-shadow: 1px 1px 0 black, -1px -1px 0 black*/
+
+        }
+
+        div.street p {
+            cursor: pointer;
+        }
+
         button.output {
             position: absolute;
 
@@ -215,7 +225,7 @@
             <div id="app">
                 <button class="output" v-on:click="returnData">Вивантажити дані</button>
 
-                <div class="unclicked" v-on:click="focus" v-for="number in numbers">
+                <div class="unclicked" v-on:click="focus" v-for="number in numbers" v-bind:id="number.id">
                     <div class="street">
                         <p>{{ "Адреса: " + number.street_name_geocode + " Ідентифікатор: " + number.id }}</p>
                     </div>

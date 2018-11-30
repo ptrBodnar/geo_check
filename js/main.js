@@ -4,6 +4,7 @@ var map = L.map('map').setView([49.551159, 25.593465],13);
 
 var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
+    minZoom: 6,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
@@ -100,7 +101,24 @@ d3.csv('data/dataset.csv')
             radius: 20
         })
             .addTo(map);
-        
+
+        markers.on('click', function (d) {
+        // console.log(d.layer.feature.properties.id);
+        //
+        var coords = [+d.latlng.lat, +d.latlng.lng];
+        // map.setView(coords, 18);
+        marker.setLatLng(coords);
+        //
+        // d3.select(d.target).attr('class', 'clicked');
+
+            d3.selectAll('.mapSelected').attr('class', 'clicked');
+
+            element = document.getElementById(d.layer.feature.properties.id);
+            element.scrollIntoView(true);
+            d3.select(element).attr('class', 'mapSelected');
+
+            });
+
         window.marker = marker;
 
         //nested data to build bars
@@ -142,9 +160,11 @@ d3.csv('data/dataset.csv')
         //EVENTS
         //////////////
 
-        markers.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+        // markers.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
 
-        markers.on('click', onMapClick);
+        // markers.on('click', function (d) {
+        //     alert('ggg')
+        // });
 
         // here I defined bar chart update after zoom or mouse move;
         map.on('moveend', function() {
